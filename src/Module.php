@@ -8,6 +8,7 @@
 
 namespace floor12\files;
 
+use backend\controllers\AppController;
 use Yii;
 use yii\db\Connection;
 
@@ -17,6 +18,7 @@ use yii\db\Connection;
  * @property string $token_salt
  * @property string $storage
  * @property string $controllerNamespace
+ * @property string $path_generator_class
  *
  */
 class Module extends \yii\base\Module
@@ -68,6 +70,20 @@ class Module extends \yii\base\Module
      */
     public $db;
 
+	/**
+	 * @var string
+	 */
+	public $path_generator_class;
+
+	/**
+	 * @var integer
+	 */
+	public $bootstrap_version;
+
+	public static $bpa;
+
+	public static $pbc;
+
     /**
      * @inheritdoc
      */
@@ -77,6 +93,9 @@ class Module extends \yii\base\Module
         $this->db = Yii::$app->{$this->params['db']};
         $this->storageFullPath = Yii::getAlias($this->storage);
         $this->cacheFullPath = Yii::getAlias($this->cache);
+
+        self::$bpa = 'yii\bootstrap'.($this->bootstrap_version ?? '').'\BootstrapPluginAsset';
+        self::$pbc = $this->path_generator_class ?? '\floor12\files\logic\PathGenerator';
     }
 
     /**

@@ -11,6 +11,7 @@ namespace floor12\files\logic;
 
 use floor12\files\components\SimpleImage;
 use floor12\files\models\FileType;
+use floor12\files\Module;
 use yii\base\ErrorException;
 use yii\db\ActiveRecordInterface;
 
@@ -57,7 +58,7 @@ class FileCreateFromPath
         // копируем файл в хранилище
         $tmp_extansion = explode('?', pathinfo($this->filePath, PATHINFO_EXTENSION));
         $extansion = $tmp_extansion[0];
-        $filename = new PathGenerator($this->storagePath) . "." . $extansion;
+        $filename = new Module::$pbc($this->storagePath) . "." . $extansion;
         $new_path = $this->storagePath . $filename;
         copy($this->filePath, $new_path);
 

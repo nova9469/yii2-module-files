@@ -150,6 +150,7 @@ class DefaultController extends Controller
      */
     public function actionUpload()
     {
+
         $model = Yii::createObject(FileCreateFromInstance::class, [
             UploadedFile::getInstanceByName('file'),
             Yii::$app->request->post(),
