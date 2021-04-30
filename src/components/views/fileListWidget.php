@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Created by PhpStorm.
  * User: floor12
@@ -11,7 +10,6 @@
  * @var $zipTitle string
  * @var $downloadAll bool
  * @var $lightboxKey string
- * @var $allowImageSrcDownload bool
  * @var $files File[]
  */
 
@@ -24,25 +22,17 @@ use yii\web\View;
 ?>
 
 <div class="files-block">
-    <?php if ($title) : ?>
-        <label><?= $title ?></label>
+    <?php if ($title): ?>
+        <label><?= $title ?></label><br>
     <?php endif; ?>
-    <ul>
-        <?php foreach ($files as $file) {
-            echo $this->render('_fileListWidget', [
-                'model' => $file,
-                'lightboxKey' => $lightboxKey,
-                'allowImageSrcDownload' => $allowImageSrcDownload
-            ]);
-        } ?>
-        <?php if ($downloadAll && sizeof($files) > 1) { ?>
-            <li>
-                <a class="f12-files-btn-download-all"
-                   onclick="filesDownloadAll('<?= $zipTitle ?>',event,'<?= Url::toRoute(['/files/default/zip']) ?>')">
-                    <?= IconHelper::DOWNLOAD ?>
-                    <?= Yii::t('files', 'Download all') ?>
-                </a>
-            </li>
-        <?php } ?>
-    </ul>
+    <?php foreach ($files as $file) {
+        echo $this->render('_fileListWidget', [
+            'model' => $file,
+            'lightboxKey' => $lightboxKey
+        ]);
+    } ?>
+    <?php if ($downloadAll && sizeof($files) > 1) echo Html::a(IconHelper::DOWNLOAD . " " .
+        Yii::t('files', 'Download all'),
+        null,
+        ['class' => 'btn btn-default btn-xs', 'onclick' => "filesDownloadAll('{$zipTitle}', event,'" . Url::toRoute(['/files/default/zip']) . "')"]) ?>
 </div>

@@ -8,6 +8,7 @@
 
 namespace floor12\files\components;
 
+use backend\controllers\AppController;
 use floor12\files\assets\FileInputWidgetAsset;
 use floor12\files\logic\ClassnameEncoder;
 use Yii;
@@ -27,10 +28,12 @@ class FileInputWidget extends InputWidget
     public $uploadButtonText;
     public $cropperHideCancel = 'false';
     public $uploadButtonClass = "btn btn-default btn-sm btn-upload";
+    public $path_options;
 
     private $block_id;
     private $layout = self::VIEW_SINGLE;
     private $ratio;
+    private $path_options_hash;
 
     public function init()
     {
@@ -50,6 +53,10 @@ class FileInputWidget extends InputWidget
             $mode = self::MODE_MULTI;
             $this->layout = self::VIEW_MULTI;
         }
+
+        if($this->path_options){
+			$this->path_options_hash = base64_encode(serialize($this->path_options));
+		}
 
         parent::init();
     }
@@ -75,7 +82,7 @@ class FileInputWidget extends InputWidget
 
         $className = new ClassnameEncoder($this->model->classname());
 
-        $this->getView()->registerJs("Yii2FilesUploaderSet('files-widget-block_{$this->block_id}','{$className}','{$this->attribute}','{$this->model->scenario}')", View::POS_READY, $this->block_id);
+        $this->getView()->registerJs("Yii2FilesUploaderSet('files-widget-block_{$this->block_id}','{$className}','{$this->attribute}','{$this->model->scenario}','{$this->path_options_hash}')", View::POS_READY, $this->block_id);
         $this->getView()->registerJs("yii2UploadRoute = '{$uploadRoute}'", View::POS_BEGIN, 'yii2UploadRoute');
         $this->getView()->registerJs("yii2CsrfParam = '" . Yii::$app->request->csrfParam . "'", View::POS_BEGIN, 'yii2CsrfFieldName');
         $this->getView()->registerJs("yii2DeleteRoute = '{$deleteRoute}'", View::POS_BEGIN, 'yii2DeleteRoute');
@@ -100,6 +107,7 @@ class FileInputWidget extends InputWidget
             'attribute' => $this->attribute,
             'model' => $this->model,
             'ratio' => $this->ratio,
+			'path_options_hash' => $this->path_options_hash
         ]);
     }
 

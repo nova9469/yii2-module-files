@@ -11,6 +11,7 @@ namespace floor12\files\logic;
 
 use floor12\files\models\File;
 use floor12\files\models\FileType;
+use floor12\files\Module;
 use Yii;
 use yii\base\ErrorException;
 use yii\web\BadRequestHttpException;
@@ -63,7 +64,7 @@ class FileCropRotate
 
         imagecopy($dest, $src, 0, 0, $this->_left, $this->_top, $this->_width, $this->_height);
 
-        $newName = new PathGenerator(Yii::$app->getModule('files')->storageFullPath) . '.jpeg';
+        $newName = new Module::$pbc(Yii::$app->getModule('files')->storageFullPath) . '.jpeg';
 
         $newPath = Yii::$app->getModule('files')->storageFullPath . '/' . $newName;
 

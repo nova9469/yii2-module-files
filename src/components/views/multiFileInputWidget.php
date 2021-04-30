@@ -20,9 +20,8 @@ use floor12\files\assets\IconHelper;
 use yii\db\ActiveRecord;
 use yii\helpers\Html;
 use yii\web\View;
-use \yii\bootstrap\BootstrapPluginAsset;
 
-BootstrapPluginAsset::register($this);
+\floor12\files\Module::$bpa::register($this);
 
 if (YII_ENV == 'test')
     echo Html::fileInput('files', null, [
@@ -36,7 +35,7 @@ if (YII_ENV == 'test')
 
     ]) ?>
 
-<div class="floor12-files-widget-block" id="files-widget-block_<?= $block_id ?>" data-ratio="<?= $ratio ?>">
+<div class="floor12-files-widget-block" id="files-widget-block_<?= $block_id ?>" data-ratio="<?= $ratio ?>" data-pathGenOptionHash="<?=$path_options_hash?>">
     <button class="<?= $uploadButtonClass ?>">
         <div class="icon"><?= IconHelper::PLUS ?></div>
         <?= $uploadButtonText ?>

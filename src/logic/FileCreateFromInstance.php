@@ -8,9 +8,11 @@
 
 namespace floor12\files\logic;
 
+use backend\controllers\AppController;
 use floor12\files\components\SimpleImage;
 use floor12\files\models\File;
 use floor12\files\models\FileType;
+use floor12\files\Module;
 use Yii;
 use yii\base\ErrorException;
 use yii\web\BadRequestHttpException;
@@ -32,6 +34,7 @@ class FileCreateFromInstance
 
     public function __construct(UploadedFile $file, array $data, IdentityInterface $identity = null, $onlyUploaded = true)
     {
+		//AppController::quiqDebug($data);
 
         $this->_onlyUploaded = $onlyUploaded;
 
@@ -66,7 +69,8 @@ class FileCreateFromInstance
         $this->_model->field = $this->_attribute;
         $this->_model->class = $data['modelClass'];
 
-        $this->_model->filename = new PathGenerator(Yii::$app->getModule('files')->storageFullPath) . '.' . $this->_instance->extension;
+        $this->_model->filename = new Module::$pbc(Yii::$app->getModule('files')->storageFullPath, $data['pathOptionsHash']) . '.' . $this->_instance->extension;
+        //$this->_model->filename = new PathGenerator(Yii::$app->getModule('files')->storageFullPath) . '.' . $this->_instance->extension;
         $this->_model->title = $this->_instance->name;
         $this->_model->content_type = $this->_instance->type;
         $this->_model->size = $this->_instance->size;
