@@ -11,6 +11,7 @@
  *
  */
 
+use \floor12\files\components\FileInputWidget;
 use floor12\files\assets\IconHelper;
 use floor12\files\models\File;
 use floor12\files\models\FileType;
@@ -28,6 +29,7 @@ $doc_contents = [
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     'application/vnd.openxmlformats-officedocument.presentationml.presentation'
 ];
+
 ?>
 <div class="btn-group files-btn-group">
 
@@ -57,19 +59,23 @@ $doc_contents = [
     <?php endif; ?>
 
     <ul class="dropdown-menu dropdown-menu-file-object dropdown-menu-file-object-single">
+        <? if(FileInputWidget::checkViewButton($options,'download')){ ?>
         <li>
             <a href="<?= $model->href ?>" target="_blank" data-pjax="0">
                 <?= IconHelper::DOWNLOAD ?>
                 <?= Yii::t('files', 'Download') ?>
             </a>
         </li>
+        <? } ?>
+		<? if(FileInputWidget::checkViewButton($options,'copy')){ ?>
         <li>
             <a onclick="clipboard('<?= $model->href ?>'); return false;">
                 <?= IconHelper::LINK ?>
                 <?= Yii::t('files', 'Copy link to clipboard') ?>
             </a>
         </li>
-        <?php if (in_array($model->content_type, $doc_contents)): ?>
+        <? } ?>
+        <?php if (in_array($model->content_type, $doc_contents) && FileInputWidget::checkViewButton($options,'view')): ?>
             <li>
                 <a href="https://view.officeapps.live.com/op/view.aspx?src=<?= Yii::$app->request->hostInfo . $model->href ?>}"
                    target="_blank" data-pjax="0">
@@ -78,13 +84,15 @@ $doc_contents = [
                 </a>
             </li>
         <?php endif; ?>
+		<? if(FileInputWidget::checkViewButton($options,'rename')){ ?>
         <li>
             <a onclick="showRenameFileForm(<?= $model->id ?>, event); return false;">
                 <?= IconHelper::RENAME ?>
                 <?= Yii::t('files', 'Rename') ?>
             </a>
         </li>
-        <?php if ($model->type == FileType::IMAGE && !$model->isSvg()): ?>
+        <? } ?>
+        <?php if ($model->type == FileType::IMAGE && !$model->isSvg() && FileInputWidget::checkViewButton($options,'crop')): ?>
             <li>
                 <a onclick="initCropper(<?= $model->id ?>,'<?= $model->href ?>',<?= $ratio ?>)">
                     <?= IconHelper::CROP ?>
@@ -92,12 +100,14 @@ $doc_contents = [
                 </a>
             </li>
         <?php endif; ?>
+		<? if(FileInputWidget::checkViewButton($options,'delete')){ ?>
         <li>
             <a onclick="removeFile(<?= $model->id ?>); showUploadButton(event); return false;">
                 <?= IconHelper::TRASH ?>
                 <?= Yii::t('files', 'Delete') ?>
             </a>
         </li>
+        <? } ?>
     </ul>
 
 </div>

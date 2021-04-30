@@ -29,11 +29,13 @@ class FileInputWidget extends InputWidget
     public $cropperHideCancel = 'false';
     public $uploadButtonClass = "btn btn-default btn-sm btn-upload";
     public $path_options;
+    public $buttons;
+
 
     private $block_id;
     private $layout = self::VIEW_SINGLE;
     private $ratio;
-    private $path_options_hash;
+    private $options_hash;
 
     public function init()
     {
@@ -54,8 +56,13 @@ class FileInputWidget extends InputWidget
             $this->layout = self::VIEW_MULTI;
         }
 
-        if($this->path_options){
-			$this->path_options_hash = base64_encode(serialize($this->path_options));
+        if($this->path_options || $this->buttons){
+        	$options = [];
+        	if($this->path_options)
+        		$options['path_options'] = $this->path_options;
+        	if($this->buttons)
+        		$options['buttons'] = $this->buttons;
+			$this->options_hash = base64_encode(serialize($options));
 		}
 
         parent::init();
@@ -82,7 +89,7 @@ class FileInputWidget extends InputWidget
 
         $className = new ClassnameEncoder($this->model->classname());
 
-        $this->getView()->registerJs("Yii2FilesUploaderSet('files-widget-block_{$this->block_id}','{$className}','{$this->attribute}','{$this->model->scenario}','{$this->path_options_hash}')", View::POS_READY, $this->block_id);
+        $this->getView()->registerJs("Yii2FilesUploaderSet('files-widget-block_{$this->block_id}','{$className}','{$this->attribute}','{$this->model->scenario}','{$this->options_hash}')", View::POS_READY, $this->block_id);
         $this->getView()->registerJs("yii2UploadRoute = '{$uploadRoute}'", View::POS_BEGIN, 'yii2UploadRoute');
         $this->getView()->registerJs("yii2CsrfParam = '" . Yii::$app->request->csrfParam . "'", View::POS_BEGIN, 'yii2CsrfFieldName');
         $this->getView()->registerJs("yii2DeleteRoute = '{$deleteRoute}'", View::POS_BEGIN, 'yii2DeleteRoute');
@@ -107,7 +114,7 @@ class FileInputWidget extends InputWidget
             'attribute' => $this->attribute,
             'model' => $this->model,
             'ratio' => $this->ratio,
-			'path_options_hash' => $this->path_options_hash
+			'options_hash' => $this->options_hash
         ]);
     }
 
@@ -118,4 +125,15 @@ class FileInputWidget extends InputWidget
     {
         return md5(Yii::$app->getModule('files')->token_salt . Yii::$app->request->userAgent . Yii::$app->name);
     }
+
+	/** Определяет необходимость отображения кнопок меню загруженного файла
+	 * @return string
+	 */
+    public static function checkViewButton($options,$button){
+    	if(!isset($options['buttons']) || (isset($options['buttons'][$button]) && $options['buttons'][$button]==1)){
+    		return true;
+		}
+    	return false;
+	}
+
 }
