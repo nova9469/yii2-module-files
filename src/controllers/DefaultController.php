@@ -150,10 +150,10 @@ class DefaultController extends Controller
      */
     public function actionUpload()
     {
-
-        $model = Yii::createObject(FileCreateFromInstance::class, [
+		$options = $this->getOptionsByHash(Yii::$app->request->post('optionsHash'));
+    	$model = Yii::createObject(FileCreateFromInstance::class, [
             UploadedFile::getInstanceByName('file'),
-            Yii::$app->request->post(),
+            array_merge(Yii::$app->request->post(),$options),
             Yii::$app->user->identity,
         ])->execute();
 
@@ -171,7 +171,8 @@ class DefaultController extends Controller
 
         return $this->renderAjax($view, [
             'model' => $model,
-            'ratio' => $ratio
+            'ratio' => $ratio,
+			'options' => $options
         ]);
     }
 
@@ -209,4 +210,13 @@ class DefaultController extends Controller
         $response->sendFile($model->getRootPreviewPath(), 'preview.jpg');
 
     }
+
+    private function getOptionsByHash($data)
+	{
+		if(!empty($data)){
+			return unserialize(base64_decode($data));
+		} else {
+			return [];
+		}
+	}
 }

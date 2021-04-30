@@ -35,7 +35,7 @@ if (YII_ENV == 'test')
 
     ]) ?>
 
-<div class="floor12-files-widget-block" id="files-widget-block_<?= $block_id ?>" data-ratio="<?= $ratio ?>" data-pathGenOptionHash="<?=$path_options_hash?>">
+<div class="floor12-files-widget-block" id="files-widget-block_<?= $block_id ?>" data-ratio="<?= $ratio ?>" data-optionsHash="<?=$options_hash?>">
     <button class="<?= $uploadButtonClass ?>">
         <div class="icon"><?= IconHelper::PLUS ?></div>
         <?= $uploadButtonText ?>

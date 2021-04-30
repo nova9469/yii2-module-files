@@ -34,7 +34,6 @@ class FileCreateFromInstance
 
     public function __construct(UploadedFile $file, array $data, IdentityInterface $identity = null, $onlyUploaded = true)
     {
-		//AppController::quiqDebug($data);
 
         $this->_onlyUploaded = $onlyUploaded;
 
@@ -69,7 +68,7 @@ class FileCreateFromInstance
         $this->_model->field = $this->_attribute;
         $this->_model->class = $data['modelClass'];
 
-        $this->_model->filename = new Module::$pbc(Yii::$app->getModule('files')->storageFullPath, $data['pathOptionsHash']) . '.' . $this->_instance->extension;
+        $this->_model->filename = new Module::$pbc(Yii::$app->getModule('files')->storageFullPath, $data['path_options']) . '.' . $this->_instance->extension;
         //$this->_model->filename = new PathGenerator(Yii::$app->getModule('files')->storageFullPath) . '.' . $this->_instance->extension;
         $this->_model->title = $this->_instance->name;
         $this->_model->content_type = $this->_instance->type;
