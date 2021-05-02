@@ -9,6 +9,7 @@
 namespace floor12\files\controllers;
 
 
+use backend\controllers\AppController;
 use floor12\files\models\File;
 use floor12\files\models\FileType;
 use floor12\files\models\VideoStatus;
@@ -18,6 +19,7 @@ use yii\console\Controller;
 use yii\db\ActiveRecord;
 use yii\db\StaleObjectException;
 use yii\helpers\Console;
+use yii\helpers\FileHelper;
 
 class ConsoleController extends Controller
 {
@@ -28,14 +30,56 @@ class ConsoleController extends Controller
      * @throws Throwable
      * @throws StaleObjectException
      */
-    function actionClean()
+    function actionClean($var = false)
     {
-        $time = strtotime('- 6 hours');
-        $files = File::find()->where(['object_id' => '0'])->andWhere(['<', 'created', $time])->all();
+    	if($var=='all') {
+			$files = File::find()->where('object_id>=0')->all();
+		} else {
+			$time = strtotime('- 6 hours');
+			$files = File::find()->where(['object_id' => '0'])->andWhere(['<', 'created', $time])->all();
+		}
+
         if ($files) foreach ($files as $file) {
             $file->delete();
         }
+
+		$module = Yii::$app->getModule('files');
+		$this->cleanEmptyFolders($module->storageFullPath);
+
     }
+
+    public function cleanEmptyFolders($dir,$sub = false)
+	{
+		if ($dir  && is_dir($dir)) {
+			$in = scandir($dir);
+			if($in && is_array($in) && count($in)) {
+				foreach ($in as $item) {
+					if(!in_array($item,['.','..'])){
+						if(is_dir($dir.File::DIRECTORY_SEPARATOR.$item)){
+							$this->cleanEmptyFolders($dir.File::DIRECTORY_SEPARATOR.$item,true);
+						}
+					}
+				}
+
+			}
+			if($this->isEmptyFolder($dir) && $sub){
+				FileHelper::removeDirectory($dir);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public function isEmptyFolder($dir)
+	{
+		$in2 = scandir($dir);
+		foreach ($in2 as $item) {
+			if(!in_array($item, ['.', '..'])) {
+				return false;
+			}
+		}
+		return true;
+	}
 
     /**
      * Run `./yii files/console/clean-cache` to remove all generated images and previews
